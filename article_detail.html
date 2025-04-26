@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <style>
+        button {
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <script>
+        if (!sessionStorage.getItem('isLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+    <header class="bg-gray-800 text-white text-center py-8">
+        <h1 class="text-3xl font-bold">文章详情</h1>
+    </header>
+    <nav class="bg-gray-700">
+        <ul class="flex justify-around py-2">
+            <li><a href="index.html" class="text-white hover:text-gray-300">首页</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300">文章分类</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300">关于我</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300">联系我</a></li>
+        </ul>
+    </nav>
+    <main class="p-8">
+        <article id="articleDetail" class="bg-white p-6 rounded shadow">
+            <!-- 文章详情会动态加载 -->
+        </article>
+    </main>
+    <footer class="bg-gray-800 text-white text-center py-4">
+        &copy; 2025 我的个人博客. 保留所有权利.
+    </footer>
+    <script>
+        const articleDetail = document.getElementById('articleDetail');
+
+        // 获取 URL 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+
+        // 从 localStorage 中获取文章详情
+        const articles = JSON.parse(localStorage.getItem('articles')) || [];
+        const targetArticle = articles.find(article => article.id === articleId);
+
+        if (targetArticle) {
+            articleDetail.innerHTML = `
+                <h2 class="text-xl font-bold">${targetArticle.title}</h2>
+                <p class="text-gray-600 text-sm">发布时间：${targetArticle.date}</p>
+                <p class="text-gray-700">${targetArticle.content}</p>
+            `;
+        } else {
+            articleDetail.innerHTML = '<p>未找到该文章。</p>';
+        }
+    </script>
+</body>
+
+</html>
+    

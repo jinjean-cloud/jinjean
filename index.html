@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <style>
+        button {
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 w-96">
+            <h2 class="text-2xl font-bold mb-6">登录</h2>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">用户名</label>
+                    <input type="text" id="username" placeholder="请输入用户名"
+                        class="w-full p-2 border border-gray-300 rounded">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码"
+                        class="w-full p-2 border border-gray-300 rounded">
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">登录</button>
+                <p id="loginError" class="text-red-500 text-sm mt-4 hidden">用户名或密码错误</p>
+            </form>
+        </div>
+    </div>
+
+    <header class="bg-gray-800 text-white text-center py-8">
+        <h1 class="text-3xl font-bold">我的个人博客</h1>
+    </header>
+    <nav class="bg-gray-700">
+        <ul class="flex justify-around py-2">
+            <li><a href="#" class="text-white hover:text-gray-300">首页</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300">文章分类</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300">关于我</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300">联系我</a></li>
+            <li><a href="publish.html" class="text-white hover:text-gray-300">发布文章</a></li>
+            <li><a href="#" class="text-white hover:text-gray-300" onclick="logout()">退出登录</a></li>
+        </ul>
+    </nav>
+    <main class="p-8">
+        <section id="articleList">
+            <!-- 这里会动态加载文章 -->
+        </section>
+    </main>
+    <footer class="bg-gray-800 text-white text-center py-4">
+        &copy; 2025 我的个人博客. 保留所有权利.
+    </footer>
+    <script>
+        const articleList = document.getElementById('articleList');
+        const loginModal = document.getElementById('loginModal');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+
+        // 预设的用户名和密码
+        const storedUsername = 'zhijin';
+        const storedPassword = 'zhijin521';
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            if (!sessionStorage.getItem('isLoggedIn')) {
+                loginModal.style.display = 'flex';
+            } else {
+                loadArticles();
+            }
+        }
+
+        // 登录验证
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            if (username === storedUsername && password === storedPassword) {
+                sessionStorage.setItem('isLoggedIn', true);
+                loginModal.style.display = 'none';
+                loadArticles();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // 退出登录
+        function logout() {
+            sessionStorage.removeItem('isLoggedIn');
+            window.location.href = 'index.html';
+        }
+
+        // 从 localStorage 中加载文章
+        function loadArticles() {
+            articleList.innerHTML = '';
+            const articles = JSON.parse(localStorage.getItem('articles')) || [];
+            articles.forEach(articleData => {
+                const article = document.createElement('article');
+                article.classList.add('bg-white', 'p-6', 'rounded', 'shadow', 'mb-4', 'relative');
+                article.innerHTML = `
+                    <h2 class="text-xl font-bold">${articleData.title}</h2>
+                    <p class="text-gray-600 text-sm">发布时间：${articleData.date}</p>
+                    <p class="text-gray-700">${articleData.content}</p>
+                    <a href="article_detail.html?id=${articleData.id}" class="text-blue-500 hover:underline">阅读全文</a>
+                    <button onclick="deleteArticle(this, '${articleData.id}')" class="absolute top-2 right-2 bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600">删除</button>
+                `;
+                articleList.appendChild(article);
+            });
+        }
+
+        // 删除文章
+        function deleteArticle(button, id) {
+            const article = button.parentNode;
+            articleList.removeChild(article);
+
+            // 从 localStorage 中移除文章
+            let articles = JSON.parse(localStorage.getItem('articles')) || [];
+            articles = articles.filter(article => article.id!== id);
+            localStorage.setItem('articles', JSON.stringify(articles));
+        }
+
+        // 页面加载时检查登录状态
+        window.addEventListener('load', checkLoginStatus);
+    </script>
+</body>
+
+</html>
+    
