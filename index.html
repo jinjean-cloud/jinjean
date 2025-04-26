@@ -41,10 +41,10 @@
         </div>
     </div>
 
-    <header class="bg-gray-800 text-white text-center py-8">
+    <header class="bg-gray-800 text-white text-center py-8 hidden" id="header">
         <h1 class="text-3xl font-bold">我的个人博客</h1>
     </header>
-    <nav class="bg-gray-700">
+    <nav class="bg-gray-700 hidden" id="nav">
         <ul class="flex justify-around py-2">
             <li><a href="#" class="text-white hover:text-gray-300">首页</a></li>
             <li><a href="#" class="text-white hover:text-gray-300">文章分类</a></li>
@@ -54,12 +54,12 @@
             <li><a href="#" class="text-white hover:text-gray-300" onclick="logout()">退出登录</a></li>
         </ul>
     </nav>
-    <main class="p-8">
+    <main class="p-8 hidden" id="main">
         <section id="articleList">
             <!-- 这里会动态加载文章 -->
         </section>
     </main>
-    <footer class="bg-gray-800 text-white text-center py-4">
+    <footer class="bg-gray-800 text-white text-center py-4 hidden" id="footer">
         &copy; 2025 我的个人博客. 保留所有权利.
     </footer>
     <script>
@@ -67,6 +67,10 @@
         const loginModal = document.getElementById('loginModal');
         const loginForm = document.getElementById('loginForm');
         const loginError = document.getElementById('loginError');
+        const header = document.getElementById('header');
+        const nav = document.getElementById('nav');
+        const main = document.getElementById('main');
+        const footer = document.getElementById('footer');
 
         // 预设的用户名和密码
         const storedUsername = 'zhijin';
@@ -76,7 +80,16 @@
         function checkLoginStatus() {
             if (!sessionStorage.getItem('isLoggedIn')) {
                 loginModal.style.display = 'flex';
+                header.classList.add('hidden');
+                nav.classList.add('hidden');
+                main.classList.add('hidden');
+                footer.classList.add('hidden');
             } else {
+                loginModal.style.display = 'none';
+                header.classList.remove('hidden');
+                nav.classList.remove('hidden');
+                main.classList.remove('hidden');
+                footer.classList.remove('hidden');
                 loadArticles();
             }
         }
@@ -89,6 +102,10 @@
             if (username === storedUsername && password === storedPassword) {
                 sessionStorage.setItem('isLoggedIn', true);
                 loginModal.style.display = 'none';
+                header.classList.remove('hidden');
+                nav.classList.remove('hidden');
+                main.classList.remove('hidden');
+                footer.classList.remove('hidden');
                 loadArticles();
             } else {
                 loginError.classList.remove('hidden');
@@ -98,7 +115,11 @@
         // 退出登录
         function logout() {
             sessionStorage.removeItem('isLoggedIn');
-            window.location.href = 'index.html';
+            loginModal.style.display = 'flex';
+            header.classList.add('hidden');
+            nav.classList.add('hidden');
+            main.classList.add('hidden');
+            footer.classList.add('hidden');
         }
 
         // 从 localStorage 中加载文章
